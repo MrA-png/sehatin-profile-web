@@ -1,5 +1,8 @@
 import React from 'react';
-import { Heart, Instagram, Twitter, Mail, MapPin } from 'lucide-react';
+import { Instagram, Twitter, Mail, MapPin } from 'lucide-react';
+
+// Import logo dari assets
+const logoImage = new URL('../assets/logo.svg', import.meta.url).href;
 
 export function Footer() {
   const footerLinks = {
@@ -30,11 +33,18 @@ export function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
           {/* Brand */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                <Heart className="w-6 h-6" />
-              </div>
-              <span className="text-2xl">Partner SEHATin</span>
+            <div className="flex items-center">
+              <img 
+                src={logoImage} 
+                alt="Partner SEHATin Logo" 
+                className="object-contain"
+                style={{ 
+                  maxHeight: '100px', 
+                  maxWidth: '140px', 
+                  height: 'auto', 
+                  width: 'auto' 
+                }}
+              />
             </div>
             <p className="text-slate-400 leading-relaxed max-w-md">
               Ruang aman untuk Gen Z dalam membahas kesehatan mental, reproduksi, 

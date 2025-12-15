@@ -6,6 +6,7 @@ import { Footer } from './Footer';
 interface ServiceDetailProps {
   serviceId: string;
   onClose: () => void;
+  onServiceClick?: (serviceId: string) => void;
 }
 
 const serviceDetails = {
@@ -371,7 +372,7 @@ const serviceDetails = {
   }
 };
 
-export function ServiceDetail({ serviceId, onClose }: ServiceDetailProps) {
+export function ServiceDetail({ serviceId, onClose, onServiceClick }: ServiceDetailProps) {
   const service = serviceDetails[serviceId as keyof typeof serviceDetails];
   
   // Scroll to top when component mounts or serviceId changes
@@ -410,7 +411,7 @@ export function ServiceDetail({ serviceId, onClose }: ServiceDetailProps) {
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
-      <Navbar onNavigate={() => onClose()} />
+      <Navbar onNavigate={() => onClose()} onServiceClick={onServiceClick} />
       
       {/* Content */}
       <div className="max-w-7xl mx-auto px-6 py-24">

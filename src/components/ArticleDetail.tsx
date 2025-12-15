@@ -10,9 +10,10 @@ interface ArticleDetailProps {
   onClose: () => void;
   onBackToList: () => void;
   onViewAllArticles?: () => void;
+  onNavigate?: (section: string) => void;
 }
 
-export function ArticleDetail({ articleId, onClose, onBackToList }: ArticleDetailProps) {
+export function ArticleDetail({ articleId, onClose, onBackToList, onViewAllArticles, onNavigate }: ArticleDetailProps) {
   const article = articlesData.find(a => a.id === articleId);
   
   // Scroll to top when component mounts or articleId changes
@@ -29,7 +30,7 @@ export function ArticleDetail({ articleId, onClose, onBackToList }: ArticleDetai
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar onNavigate={onClose} onViewAllArticles={onViewAllArticles} />
+      <Navbar onNavigate={onNavigate || onClose} onViewAllArticles={onViewAllArticles} />
       
       {/* Back Button & Actions */}
       <div className="bg-white border-b border-slate-200">

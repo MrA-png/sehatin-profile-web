@@ -65,44 +65,91 @@ export default function App() {
     // Remove # if present
     const cleanSection = section.replace('#', '');
     
-    // If already on home, just scroll
+    // If already on home, just scroll (no need to set state)
     if (currentView === 'home') {
-      const element = document.querySelector(`#${cleanSection}`);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      // Use requestAnimationFrame to ensure DOM is ready
+      requestAnimationFrame(() => {
+        const element = document.querySelector(`#${cleanSection}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
       return;
     }
     
     // If not on home, navigate back first
     setCurrentView('home');
     
-    // Wait for view to change, then scroll
+    // Wait for view to change and DOM to update, then scroll
+    // Use longer timeout to ensure home page is fully rendered
     setTimeout(() => {
-      const element = document.querySelector(`#${cleanSection}`);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 150);
+      // Try multiple times to ensure element is found
+      const tryScroll = (attempts = 0) => {
+        const element = document.querySelector(`#${cleanSection}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        } else if (attempts < 5) {
+          // Retry if element not found yet
+          setTimeout(() => tryScroll(attempts + 1), 50);
+        }
+      };
+      tryScroll();
+    }, 100);
   };
 
   if (currentView === 'articleList') {
-    return <ArticleList onClose={handleCloseArticles} onArticleClick={handleArticleClick} onViewAllArticles={handleViewAllArticles} />;
+    // Create a navigation handler that closes articles and navigates to section
+    const handleNavigateFromArticles = (section: string) => {
+      handleCloseArticles();
+      // Wait for view to change, then scroll to section
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          const element = document.querySelector(`#${section}`);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }, 100);
+    };
+    
+    return (
+      <ArticleList 
+        onClose={handleCloseArticles} 
+        onArticleClick={handleArticleClick} 
+        onViewAllArticles={handleViewAllArticles}
+        onNavigate={handleNavigateFromArticles}
+      />
+    );
   }
 
   if (currentView === 'articleDetail' && selectedArticleId) {
+    // Create a navigation handler that closes articles and navigates to section
+    const handleNavigateFromArticleDetail = (section: string) => {
+      handleCloseArticles();
+      // Wait for view to change, then scroll to section
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          const element = document.querySelector(`#${section}`);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }, 100);
+    };
+    
     return (
       <ArticleDetail 
         articleId={selectedArticleId} 
         onClose={handleCloseArticles}
         onBackToList={handleBackToList}
         onViewAllArticles={handleViewAllArticles}
+        onNavigate={handleNavigateFromArticleDetail}
       />
     );
   }
 
   if (currentView === 'serviceDetail' && selectedServiceId) {
-    return <ServiceDetail serviceId={selectedServiceId} onClose={handleCloseService} />;
+    return <ServiceDetail serviceId={selectedServiceId} onClose={handleCloseService} onServiceClick={handleServiceClick} />;
   }
 
   if (currentView === 'periodCalculator') {

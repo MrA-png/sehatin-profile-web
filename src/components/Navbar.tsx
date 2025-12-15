@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Heart, Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
+
+// Import logo dari assets
+const logoImage = new URL('../assets/logo.svg', import.meta.url).href;
 
 interface NavbarProps {
   onNavigate?: (section: string) => void;
@@ -89,9 +92,22 @@ export function Navbar({ onNavigate, onPeriodCalculatorClick, onServiceClick, on
       return;
     }
 
-    // Handle "Artikel & Edukasi" - open ArticleList
-    if (href === '#artikel' && onViewAllArticles) {
-      onViewAllArticles();
+    // Handle "Artikel & Edukasi" - open ArticleList (always, regardless of current page)
+    if (href === '#artikel') {
+      if (onViewAllArticles) {
+        onViewAllArticles();
+        return;
+      }
+      // If onViewAllArticles not available, navigate to home then scroll to artikel section
+      if (onNavigate) {
+        onNavigate('artikel');
+        return;
+      }
+      // If onNavigate not available, just scroll
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
       return;
     }
 
@@ -111,23 +127,48 @@ export function Navbar({ onNavigate, onPeriodCalculatorClick, onServiceClick, on
       return;
     }
     
-    // If onNavigate is provided, we're on article/service page - navigate back to home first
+    // Handle FAQ and Testimoni - navigate to home first if not on home, then scroll
+    if (href === '#faq' || href === '#testimoni') {
+      // Check if element exists on current page
+      const element = document.querySelector(href);
+      
+      // If element exists, we're on home page - just scroll directly
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      
+      // Element doesn't exist, we're on article/service page - navigate back to home first
+      // onNavigate will handle scrolling to the section after navigating to home
+      if (onNavigate) {
+        const section = href.replace('#', '');
+        onNavigate(section);
+        return;
+      }
+      
+      // Fallback: try to scroll anyway
+      requestAnimationFrame(() => {
+        const targetElement = document.querySelector(href);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+      return;
+    }
+    
+    // For other links, check if element exists on current page
+    const element = document.querySelector(href);
+    
+    // If element exists, we're on home page - just scroll directly
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    
+    // Element doesn't exist, we're on article/service page - navigate back to home first
     if (onNavigate) {
       const section = href.replace('#', '');
       onNavigate(section);
-      // Wait for navigation, then scroll
-      setTimeout(() => {
-        const element = document.querySelector(href);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
-    } else {
-      // We're on home page, just scroll
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
     }
   };
 
@@ -151,20 +192,19 @@ export function Navbar({ onNavigate, onPeriodCalculatorClick, onServiceClick, on
       return;
     }
     
+    // Check if element exists on current page
+    const element = document.querySelector(href);
+    
+    // If element exists, we're on home page - just scroll directly
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    
+    // Element doesn't exist, we're on article/service page - navigate back to home first
     if (onNavigate) {
       const section = href.replace('#', '');
       onNavigate(section);
-      setTimeout(() => {
-        const element = document.querySelector(href);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
-    } else {
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
     }
   };
 
@@ -199,11 +239,18 @@ export function Navbar({ onNavigate, onPeriodCalculatorClick, onServiceClick, on
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <a href="#hero" className="flex items-center gap-2" onClick={handleLogoClick}>
-            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-              <Heart className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-xl text-slate-800">Partner SEHATin</span>
+          <a href="#hero" className="flex items-center" onClick={handleLogoClick}>
+            <img 
+              src={logoImage} 
+              alt="Partner SEHATin Logo" 
+              className="object-contain"
+              style={{ 
+                maxHeight: '80px', 
+                maxWidth: '120px', 
+                height: 'auto', 
+                width: 'auto' 
+              }}
+            />
           </a>
 
           {/* Desktop Navigation */}

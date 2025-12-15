@@ -7,6 +7,7 @@ interface ArticleListProps {
   onClose: () => void;
   onArticleClick: (articleId: string) => void;
   onViewAllArticles?: () => void;
+  onNavigate?: (section: string) => void;
 }
 
 export const articlesData = [
@@ -197,7 +198,7 @@ export const articlesData = [
   }
 ];
 
-export function ArticleList({ onClose, onArticleClick }: ArticleListProps) {
+export function ArticleList({ onClose, onArticleClick, onViewAllArticles, onNavigate }: ArticleListProps) {
   const [selectedCategory, setSelectedCategory] = useState('Semua Artikel');
 
   // Scroll to top when component mounts
@@ -219,7 +220,7 @@ export function ArticleList({ onClose, onArticleClick }: ArticleListProps) {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar onNavigate={onClose} onViewAllArticles={onViewAllArticles} />
+      <Navbar onNavigate={onNavigate || onClose} onViewAllArticles={onViewAllArticles} />
       
       {/* Content */}
       <div className="max-w-7xl mx-auto px-6 py-24">
